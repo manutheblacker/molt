@@ -1,0 +1,12 @@
+{
+  "name": "molt",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "MOLT — a minimalist insect street fighter for the browser.",
+  "scripts": {
+    "start": "python3 -m http.server 5173",
+    "build:itch": "node scripts/build-itch.mjs",
+    "preview:dist": "python3 -m http.server 5174 --directory dist"
+  }
+}

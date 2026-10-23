@@ -1,0 +1,50 @@
+MOLT — HOW TO RUN THE DOWNLOADED VERSION
+========================================
+
+MOLT is a browser game. The zip does not need to be installed, but it does
+need to be served by a small local web server. Opening index.html directly
+from your file manager will show a blank page because browsers block ES
+modules on file:// URLs.
+
+QUICKEST METHOD — PYTHON 3
+--------------------------
+
+1. Unzip this folder somewhere.
+
+2. Open a terminal in the unzipped folder:
+   - macOS: right-click the folder > Services > New Terminal at Folder
+   - Windows: open the folder, right-click empty space > Open in Terminal
+   - Linux: right-click the folder > Open in Terminal
+
+3. Start a local server:
+   - macOS / Linux:  python3 -m http.server 8080
+   - Windows:        py -m http.server 8080
+
+4. Open this address in your browser:
+   http://localhost:8080
+
+5. Press Ctrl+C in the terminal when you are done playing.
+
+If Python is not installed, install Python 3 from
+https://www.python.org/downloads/ and enable "Add python.exe to PATH"
+on Windows. Any other static web server will also work. If you have
+Node.js installed, you can instead run:
+
+   npx serve .
+
+Then open the URL printed in the terminal.
+
+PLAYING
+-------
+
+- Click once inside the game to enable audio.
+- Keyboard is recommended for local 2P.
+- Default controls:
+    Player 1: A / D move, W / S jump / crouch, F light, G heavy, H special
+    Player 2: Arrow keys move, , light, . heavy, / special
+- Hold back to block. Crouch + heavy sweeps.
+- Esc or P pauses. M mutes all audio.
+- On phones and tablets, use the on-screen touch controls.
+
+There is no installation, account, or internet connection required after
+the files are downloaded.

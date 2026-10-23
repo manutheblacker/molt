@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MOLT — Cover</title>
+  <link rel="stylesheet" href="../styles.css" />
+  <style>
+    html, body { background: #08070b; }
+    body { overflow: auto; min-height: 100vh; }
+    #cover-wrap {
+      min-height: 100vh;
+      width: 100%;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+    #cover {
+      display: block;
+      width: min(90vw, 630px);
+      height: auto;
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.7);
+    }
+  </style>
+</head>
+<body>
+  <div id="cover-wrap"><canvas id="cover" width="1260" height="1000"></canvas></div>
+  <script type="module">
+    import { drawSpecimen } from "../src/draw.js";
+    import { drawStage } from "../src/stage.js";
+    import { ROSTER } from "../src/roster.js";
+
+    const W = 1260;
+    const H = 1000;
+    const CREAM = "#F2E8D5";
+    const INK = "#0C0B10";
+    const ACCENT = "#E4572E";
+    const P1 = "#F2C14E";
+    const P2 = "#7FD1C1";
+    const DISPLAY = "Anton, sans-serif";
+    const MONO = "'Space Mono', monospace";
+
+    const canvas = document.getElementById("cover");
+    const ctx = canvas.getContext("2d");
+
+    function text(str, x, y, size, color, opts = {}) {
+      const {
+        display = false,
+        align = "left",
+        tracking = 0,
+        alpha = 1,
+        outline = null,
+        outlineWidth = 4,
+        shadow = null,
+        shadowX = 6,
+        shadowY = 6,
+        weight = 400,
+      } = opts;
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.font = display ? `${size}px ${DISPLAY}` : `${weight} ${size}px ${MONO}`;
+      ctx.textBaseline = "alphabetic";
+      ctx.textAlign = "left";
+      const chars = [...str];
+      let total = 0;
+      for (const ch of chars) total += ctx.measureText(ch).width;
+      total += tracking * Math.max(0, chars.length - 1);
+      let cursor = x;
+      if (align === "center") cursor = x - total / 2;
+      else if (align === "right") cursor = x - total;
+      const paint = (fill, ox = 0, oy = 0) => {
+        let cx = cursor + ox;
+        ctx.fillStyle = fill;
+        for (const ch of chars) {
+          ctx.fillText(ch, cx, y + oy);
+          cx += ctx.measureText(ch).width + tracking;
+        }
+      };
+      if (shadow) paint(shadow, shadowX, shadowY);
+      if (outline) {
+        ctx.lineJoin = "round";
+        ctx.strokeStyle = outline;
+        ctx.lineWidth = outlineWidth;
+        ctx.lineCap = "round";
+        let cx = cursor;
+        for (const ch of chars) {
+          ctx.strokeText(ch, cx, y);
+          cx += ctx.measureText(ch).width + tracking;
+        }
+      }
+      paint(color);
+      ctx.restore();
+    }
+
+    function rule(x1, y, x2, color = CREAM, alpha = 0.25, width = 1) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.strokeStyle = color;
+      ctx.lineWidth = width;
+      ctx.beginPath();
+      ctx.moveTo(x1, y);
+      ctx.lineTo(x2, y);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function frameMarks() {
+      ctx.save();
+      ctx.strokeStyle = "rgba(242,232,213,0.34)";
+      ctx.lineWidth = 1.5;
+      const m = 34;
+      const l = 28;
+      for (const [x, y, sx, sy] of [
+        [m, m, 1, 1],
+        [W - m, m, -1, 1],
+        [m, H - m, 1, -1],
+        [W - m, H - m, -1, -1],
+      ]) {
+        ctx.beginPath();
+        ctx.moveTo(x + sx * l, y);
+        ctx.lineTo(x, y);
+        ctx.lineTo(x, y + sy * l);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    function grain() {
+      const g = document.createElement("canvas");
+      g.width = 220;
+      g.height = 175;
+      const gc = g.getContext("2d");
+      const data = gc.createImageData(g.width, g.height);
+      let seed = 1977;
+      for (let i = 0; i < data.data.length; i += 4) {
+        seed = (seed * 1664525 + 1013904223) >>> 0;
+        const v = (seed >>> 24) & 255;
+        data.data[i] = v;
+        data.data[i + 1] = v;
+        data.data[i + 2] = v;
+        data.data[i + 3] = 12;
+      }
+      gc.putImageData(data, 0, 0);
+      ctx.save();
+      ctx.globalCompositeOperation = "soft-light";
+      ctx.globalAlpha = 0.7;
+      ctx.drawImage(g, 0, 0, W, H);
+      ctx.restore();
+    }
+
+    function draw() {
+      const t = 2.4;
+      ctx.clearRect(0, 0, W, H);
+      ctx.fillStyle = "#07060a";
+      ctx.fillRect(0, 0, W, H);
+
+      // Cover-fit the rooftop stage: fill the vertical space, crop the sides.
+      const stageScale = H / 720;
+      const offsetX = (W - 1280 * stageScale) / 2;
+      ctx.save();
+      ctx.translate(offsetX, 0);
+      ctx.scale(stageScale, stageScale);
+      drawStage(ctx, t, { dim: 0.28 });
+      ctx.restore();
+
+      // Title legibility wash.
+      const topShade = ctx.createLinearGradient(0, 0, 0, 460);
+      topShade.addColorStop(0, "rgba(6,5,9,0.62)");
+      topShade.addColorStop(0.72, "rgba(6,5,9,0.2)");
+      topShade.addColorStop(1, "rgba(6,5,9,0)");
+      ctx.fillStyle = topShade;
+      ctx.fillRect(0, 0, W, 470);
+
+      // Bottom band.
+      const bottomShade = ctx.createLinearGradient(0, 710, 0, H);
+      bottomShade.addColorStop(0, "rgba(6,5,9,0)");
+      bottomShade.addColorStop(0.38, "rgba(6,5,9,0.6)");
+      bottomShade.addColorStop(1, "rgba(6,5,9,0.94)");
+      ctx.fillStyle = bottomShade;
+      ctx.fillRect(0, 680, W, 320);
+
+      // Rooftop ground glow / edge.
+      const ground = 839;
+      ctx.save();
+      ctx.globalAlpha = 0.5;
+      ctx.strokeStyle = P1;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(0, ground);
+      ctx.lineTo(W, ground);
+      ctx.stroke();
+      ctx.restore();
+
+      // Fighters.
+      drawSpecimen(ctx, ROSTER[0], 252, 842, 2.12, 1, t, { state: "idle" });
+      drawSpecimen(ctx, ROSTER[3], 1002, 842, 2.12, -1, t + 1.1, { state: "idle" });
+      drawSpecimen(ctx, ROSTER[4], 628, 842, 1.7, 1, t + 2.1, { state: "idle" });
+
+      // Header.
+      text("A MINIMALIST BUG FIGHTER", 64, 74, 13, CREAM, { tracking: 5, alpha: 0.7 });
+      text("ONE ROOF / FIVE PROBLEMS", W - 64, 74, 13, CREAM, { tracking: 5, alpha: 0.7, align: "right" });
+      text("SPECIMEN 01 — 05", 64, 102, 11, CREAM, { tracking: 3.5, alpha: 0.38 });
+
+      // Title block.
+      rule(304, 136, 956, CREAM, 0.2);
+      text("MOLT", W / 2, 344, 258, CREAM, {
+        display: true,
+        align: "center",
+        tracking: 10,
+        shadow: ACCENT,
+        shadowX: 12,
+        shadowY: 13,
+        outline: INK,
+        outlineWidth: 11,
+      });
+      text("STREET SPECIMENS", W / 2, 396, 20, CREAM, {
+        tracking: 16,
+        align: "center",
+        alpha: 1,
+      });
+      rule(438, 430, 822, CREAM, 0.34);
+      text("FIVE SPECIMENS. ONE ROOF. NO MERCY.", W / 2, 464, 15, P1, {
+        tracking: 4.5,
+        align: "center",
+        alpha: 1,
+        shadow: INK,
+        shadowX: 2,
+        shadowY: 2,
+      });
+
+      // Roster strip.
+      const names = ROSTER.map((r) => r.name).join("   ·   ");
+      text(names, 64, 928, 14, CREAM, { tracking: 3, alpha: 0.9 });
+      text("VS CPU  ·  LOCAL 2P  ·  BEST OF THREE", W - 64, 928, 11, CREAM, {
+        tracking: 2.7,
+        alpha: 0.65,
+        align: "right",
+      });
+
+      rule(64, 950, W - 64, CREAM, 0.2);
+      text("BLOCK. MOLT. REPEAT.", 64, 976, 10, ACCENT, { tracking: 3.2, alpha: 1 });
+      text("A BROWSER FIGHTING GAME", W - 64, 976, 10, CREAM, {
+        tracking: 2.8,
+        alpha: 0.46,
+        align: "right",
+      });
+
+      frameMarks();
+      grain();
+    }
+
+    window.__COVER = { canvas, draw, download };
+
+    function download() {
+      canvas.toBlob((blob) => {
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = "molt-itch-cover.png";
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+      }, "image/png");
+    }
+
+    Promise.all([
+      document.fonts.load('16px Anton'),
+      document.fonts.load('16px "Space Mono"'),
+      document.fonts.load('700 16px "Space Mono"'),
+    ]).finally(() => {
+      draw();
+      window.__COVER.ready = true;
+    });
+  </script>
+</body>
+</html>

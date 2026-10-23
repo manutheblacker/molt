@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0c0b10" />
+  <meta name="description" content="MOLT — a minimalist bug fighting game. Five street specimens. One rooftop. No surrender." />
+  <title>MOLT — Street Specimens</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <main id="stage" aria-label="MOLT game">
+    <canvas id="game" width="1280" height="720" tabindex="0" aria-label="MOLT — minimalist insect fighting game"></canvas>
+
+    <div id="touch" class="touch" aria-hidden="true">
+      <div class="touch-pad">
+        <button class="tbtn t-up" data-action="up" aria-label="Jump">▲</button>
+        <button class="tbtn t-left" data-action="left" aria-label="Move left">◀</button>
+        <button class="tbtn t-down" data-action="down" aria-label="Crouch">▼</button>
+        <button class="tbtn t-right" data-action="right" aria-label="Move right">▶</button>
+      </div>
+      <div class="touch-actions">
+        <button class="tbtn t-special" data-action="special" aria-label="Special">SP</button>
+        <button class="tbtn t-heavy" data-action="heavy" aria-label="Heavy attack">HV</button>
+        <button class="tbtn t-light" data-action="light" aria-label="Light attack">LT</button>
+      </div>
+      <button class="tbtn t-pause" data-action="pause" aria-label="Pause or back">II</button>
+    </div>
+  </main>
+
+  <noscript>MOLT requires JavaScript.</noscript>
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>
