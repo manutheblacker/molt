@@ -6,6 +6,18 @@
 - `art/molt-itch-cover.png` — 2× version (1260 × 1000) for store pages or promo use.
 - `art/cover.html` — editable source for regenerating the cover.
 
+## Screenshots
+
+Upload these to the itch.io gallery in this order (all 1280 × 720):
+
+1. `art/screenshots/01-title.png` — title screen
+2. `art/screenshots/02-select.png` — five-fighter select screen
+3. `art/screenshots/03-fight.png` — close-range exchange
+4. `art/screenshots/04-special.png` — GEX's Tongue Snatch
+5. `art/screenshots/05-options.png` — custom controls and audio options
+
+The 2× source files are in `art/screenshots/2x/` if you need them later.
+
 ## Title
 
 MOLT — Street Specimens
@@ -75,10 +87,11 @@ Pick a bug and press forward.
 4. Paste the short description above into the **Short description / tagline** field.
 5. Paste the long description above into the **Description** field, including the **Play in your browser** and **Running the downloaded zip locally** sections.
 6. Upload the cover image: `art/molt-itch-cover-630x500.png`.
-7. Upload `dist/molt-itch.zip` in the **Uploads** section.
-8. Check **This file will be played in the browser**.
-9. Set the embed viewport to **1280 × 720**, enable fullscreen, and set mobile orientation to **landscape**.
-10. Add the suggested tags, save the project, and open the public page to test the game.
+7. Upload the five screenshots from `art/screenshots/` in numbered order.
+8. Upload `dist/molt-itch.zip` in the **Uploads** section.
+9. Check **This file will be played in the browser**.
+10. Set the embed viewport to **1280 × 720**, enable fullscreen, and set mobile orientation to **landscape**.
+11. Add the suggested tags, save the project, and open the public page to test the game.
 
 ## Suggested tags
 
